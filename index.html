@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Da Best, Numba Wan</title>
+
+    <style>
+        :root {
+            --pink-bg: #ffeaf2;
+            --pink-light: #fff7fa;
+            --pink-card: #fffafd;
+            --pink: #ffc3d8;
+            --pink-medium: #f79fbe;
+            --pink-dark: #e96b99;
+            --pink-deep: #d84f83;
+            --pink-border: #f5b5cd;
+            --black: #211a1d;
+            --muted: #68565e;
+            --correct-bg: #fce8f1;
+            --wrong-bg: #ffdee9;
+            --shadow: 0 10px 28px rgba(181, 72, 117, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+            color: var(--black);
+            background-color: var(--pink-bg);
+            background-image:
+                radial-gradient(circle at 8% 8%, rgba(255,255,255,0.85) 0 3px, transparent 4px),
+                radial-gradient(circle at 93% 18%, rgba(255,181,207,0.45) 0 5px, transparent 6px),
+                radial-gradient(circle at 12% 58%, rgba(255,255,255,0.6) 0 4px, transparent 5px),
+                radial-gradient(circle at 88% 75%, rgba(255,181,207,0.45) 0 4px, transparent 5px),
+                linear-gradient(140deg, #ffe8f1 0%, #fff0f6 45%, #ffdeeb 100%);
+            background-attachment: fixed;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            color: var(--black);
+        }
+
+        .page {
+            width: min(100% - 28px, 980px);
+            margin: 0 auto;
+            padding: 34px 0 60px;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 42px 24px 36px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            background: linear-gradient(145deg, #ffd5e4, #fff5f9 57%, #ffc4d9);
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before,
+        .hero::after {
+            position: absolute;
+            font-size: 46px;
+            opacity: 0.55;
+            pointer-events: none;
+        }
+
+        .hero::before {
+            content: "♡";
+            top: 13px;
+            left: 22px;
+            transform: rotate(-15deg);
+        }
+
+        .hero::after {
+            content: "୨୧";
+            right: 18px;
+            bottom: 12px;
+            transform: rotate(8deg);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            margin-bottom: 14px;
+            padding: 7px 14px;
+            border: 1px solid var(--pink-border);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.72);
+            color: var(--black);
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.1rem, 7vw, 4.1rem);
+            line-height: 1.12;
+            letter-spacing: -1.5px;
+            color: var(--black);
+        }
+
+        .subtitle {
+            max-width: 620px;
+            margin: 15px auto 0;
+            color: var(--black);
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+
+        .hero-decoration {
+            margin-top: 20px;
+            font-size: 1.35rem;
+            letter-spacing: 8px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 19px 0;
+        }
+
+        .stat {
+            padding: 16px 10px;
+            border: 1px solid var(--pink-border);
+            border-radius: 19px;
+            background: rgba(255, 250, 252, 0.88);
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(181, 72, 117, 0.06);
+        }
+
+        .stat strong {
+            display: block;
+            margin-bottom: 4px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.5rem;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 0.8rem;
+        }
+
+        .progress-panel {
+            padding: 19px 20px;
+            margin-bottom: 24px;
+            border: 1px solid var(--pink-border);
+            border-radius: 20px;
+            background: var(--pink-card);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 11px;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .progress-track {
+            height: 13px;
+            overflow: hidden;
+            border: 1px solid #f4c0d3;
+            border-radius: 999px;
+            background: #ffe3ed;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #ffc1d8, #e96b99);
+            transition: width 0.25s ease;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin: 34px 0 15px;
+            padding: 17px 19px;
+            border: 1px solid var(--pink-border);
+            border-radius: 20px;
+            background: linear-gradient(120deg, #ffcfe0, #fff7fa);
+            box-shadow: 0 5px 15px rgba(181, 72, 117, 0.07);
+        }
+
+        .section-number {
+            display: grid;
+            flex: 0 0 43px;
+            height: 43px;
+            place-items: center;
+            border: 1px solid #ed9dbb;
+            border-radius: 14px;
+            background: #fff8fb;
+            font-weight: 900;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.25rem, 4vw, 1.75rem);
+        }
+
+        .section-heading p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 0.86rem;
+            line-height: 1.5;
+        }
+
+        .question-card {
+            margin-bottom: 15px;
+            padding: 21px;
+            border: 1px solid var(--pink-border);
+            border-radius: 22px;
+            background: rgba(255, 250, 252, 0.96);
+            box-shadow: 0 6px 18px rgba(181, 72, 117, 0.07);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .question-card:focus-within {
+            border-color: var(--pink-deep);
+        }
+
+        .question-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .question-number {
+            display: grid;
+            flex: 0 0 37px;
+            height: 37px;
+            place-items: center;
+            border: 1px solid var(--pink-border);
+            border-radius: 12px;
+            background: #ffe5ef;
+            font-size: 0.85rem;
+            font-weight: 900;
+        }
+
+        .question-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .question-title {
+            margin: 5px 0 16px;
+            font-size: 1rem;
+            line-height: 1.65;
+            font-weight: 800;
+        }
+
+        .choice-list {
+            display: grid;
+            gap: 9px;
+        }
+
+        .choice {
+            display: flex;
+            align-items: flex-start;
+            gap: 11px;
+            padding: 12px 13px;
+            border: 1px solid #f2cada;
+            border-radius: 14px;
+            background: #fff8fb;
+            cursor: pointer;
+            font-size: 0.93rem;
+            line-height: 1.55;
+            transition: background 0.18s ease, border-color 0.18s ease;
+        }
+
+        .choice:hover {
+            border-color: #e98fb1;
+            background: #ffedf4;
+        }
+
+        .choice input {
+            flex: 0 0 auto;
+            width: 17px;
+            height: 17px;
+            margin: 3px 0 0;
+            accent-color: #e96b99;
+            cursor: pointer;
+        }
+
+        .match-instruction {
+            margin: 0 0 18px;
+            padding: 13px 15px;
+            border-left: 4px solid var(--pink-dark);
+            border-radius: 9px 14px 14px 9px;
+            background: #ffedf4;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .match-select {
+            width: 100%;
+            padding: 12px 38px 12px 13px;
+            border: 1px solid #edb0c7;
+            border-radius: 13px;
+            outline: none;
+            background: #fff8fb;
+            color: var(--black);
+            cursor: pointer;
+            line-height: 1.5;
+        }
+
+        .match-select:focus {
+            border-color: var(--pink-deep);
+            box-shadow: 0 0 0 3px rgba(233, 107, 153, 0.15);
+        }
+
+        .match-select option {
+            color: var(--black);
+            background: #fff8fb;
+        }
+
+        .answer-note {
+            display: none;
+            margin-top: 15px;
+            padding: 12px 14px;
+            border: 1px solid var(--pink-border);
+            border-radius: 13px;
+            background: #ffedf4;
+            font-size: 0.9rem;
+            line-height: 1.65;
+        }
+
+        .answer-note.visible {
+            display: block;
+        }
+
+        .question-card.correct {
+            border: 2px solid #df83a7;
+            background: #fff2f7;
+        }
+
+        .question-card.incorrect {
+            border: 2px solid #ef9fba;
+            background: #ffeaf2;
+        }
+
+        .question-card.correct .question-number {
+            background: #f5c8d9;
+            border-color: #df83a7;
+        }
+
+        .question-card.incorrect .question-number {
+            background: #ffd7e5;
+            border-color: #ef9fba;
+        }
+
+        .action-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0 22px;
+        }
+
+        .action-button {
+            min-width: 190px;
+            padding: 14px 20px;
+            border: 1px solid #e991b1;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ffd0e1, #f6a7c4);
+            color: var(--black);
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(181, 72, 117, 0.12);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 19px rgba(181, 72, 117, 0.17);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        .action-button.secondary {
+            background: #fff7fa;
+        }
+
+        .result-box {
+            display: none;
+            padding: 30px 22px;
+            margin-top: 20px;
+            border: 2px solid var(--pink-dark);
+            border-radius: 27px;
+            background: linear-gradient(145deg, #fff8fb, #ffd7e6);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .result-box.visible {
+            display: block;
+        }
+
+        .result-heart {
+            margin-bottom: 5px;
+            font-size: 2.3rem;
+        }
+
+        .result-box h2 {
+            margin: 7px 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.9rem;
+        }
+
+        .score {
+            margin: 12px 0;
+            font-size: clamp(2.5rem, 9vw, 4rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .result-message {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.75;
+        }
+
+        .result-detail {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding: 22px 14px;
+            color: var(--black);
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .footer .hearts {
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+        }
+
+        .small-note {
+            color: var(--muted);
+            font-size: 0.82rem;
+        }
+
+        @media (max-width: 620px) {
+            .page {
+                width: min(100% - 18px, 980px);
+                padding-top: 12px;
+            }
+
+            .hero {
+                padding: 36px 17px 29px;
+                border-radius: 23px;
+            }
+
+            .hero::before,
+            .hero::after {
+                font-size: 30px;
+            }
+
+            .stats {
+                gap: 7px;
+            }
+
+            .stat {
+                padding: 13px 5px;
+                border-radius: 15px;
+            }
+
+            .stat strong {
+                font-size: 1.25rem;
+            }
+
+            .stat span {
+                font-size: 0.72rem;
+            }
+
+            .progress-panel {
+                padding: 16px;
+            }
+
+            .progress-text {
+                font-size: 0.8rem;
+            }
+
+            .section-heading {
+                gap: 10px;
+                padding: 14px;
+            }
+
+            .section-number {
+                flex-basis: 37px;
+                height: 37px;
+            }
+
+            .question-card {
+                padding: 15px;
+                border-radius: 18px;
+            }
+
+            .question-top {
+                gap: 9px;
+            }
+
+            .question-number {
+                flex-basis: 32px;
+                height: 32px;
+                border-radius: 10px;
+            }
+
+            .question-title {
+                margin-top: 2px;
+                font-size: 0.94rem;
+            }
+
+            .choice {
+                padding: 11px;
+                font-size: 0.88rem;
+            }
+
+            .action-button {
+                width: 100%;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+
+        <header class="hero">
+            <div class="eyebrow">A little pink study date ♡</div>
+
+            <h1>Be Da Best,<br>Numba Wan</h1>
+
+            <p class="subtitle">
+                Introduction to Parasitology
+                <br>
+                A 50-question reviewer made just for you.
+                Study a little, learn a lot, and remember how amazing you are. ♡
+            </p>
+
+            <div class="hero-decoration" aria-hidden="true">
+                ♡　୨୧　♡
+            </div>
+        </header>
+
+        <section class="stats" aria-label="Questionnaire summary">
+            <div class="stat">
+                <strong>50</strong>
+                <span>Total Questions</span>
+            </div>
+
+            <div class="stat">
+                <strong>35</strong>
+                <span>Multiple Choice</span>
+            </div>
+
+            <div class="stat">
+                <strong>15</strong>
+                <span>Matching Type</span>
+            </div>
+        </section>
+
+        <section class="progress-panel" aria-label="Quiz progress">
+            <div class="progress-text">
+                <span>♡ Your progress</span>
+                <span id="progressText">Answered 0 of 50</span>
+            </div>
+
+            <div
+                class="progress-track"
+                role="progressbar"
+                aria-label="Questions answered"
+                aria-valuemin="0"
+                aria-valuemax="50"
+                aria-valuenow="0"
+                id="progressTrack"
+            >
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </section>
+
+        <form id="quizForm">
+
+            <section aria-labelledby="mcqHeading">
+                <div class="section-heading">
+                    <div class="section-number">01</div>
+                    <div>
+                        <h2 id="mcqHeading">Multiple Choice</h2>
+                        <p>Choose the best answer for each question.</p>
+                    </div>
+                </div>
+
+                <div id="mcqContainer"></div>
+            </section>
+
+            <section aria-labelledby="matchingHeading">
+                <div class="section-heading">
+                    <div class="section-number">02</div>
+                    <div>
+                        <h2 id="matchingHeading">Matching Type</h2>
+                        <p>Match each description with the correct term.</p>
+                    </div>
+                </div>
+
+                <div class="match-instruction">
+                    Select the term that best describes each definition.
+                    Each question is worth one point.
+                </div>
+
+                <div id="matchingContainer"></div>
+            </section>
+
+            <div class="action-area">
+                <button class="action-button" type="submit">
+                    Check My Answers ♡
+                </button>
+
+                <button
+                    class="action-button secondary"
+                    type="button"
+                    id="resetButton"
+                >
+                    Start Again ↻
+                </button>
+            </div>
+
+        </form>
+
+        <section
+            class="result-box"
+            id="resultBox"
+            aria-live="polite"
+            aria-atomic="true"
+        >
+            <div class="result-heart">♡ ୨୧ ♡</div>
+            <h2>Your Results</h2>
+
+            <div class="score" id="scoreDisplay">0 / 50</div>
+
+            <p class="result-message" id="resultMessage"></p>
+
+            <p class="result-detail" id="resultDetail"></p>
+        </section>
+
+        <footer class="footer">
+            <div class="hearts">♡ ♡ ♡</div>
+            <strong>Be Da Best, Numba Wan</strong>
+            <br>
+            A little reminder that you can do great things.
+            <br>
+            <span class="small-note">Made with love and a little pink magic. ♡</span>
+        </footer>
+
+    </main>
+
+    <script>
+        const mcqQuestions = [
+            {
+                id: 1,
+                question: "What is parasitology?",
+                options: [
+                    "The branch of biology that studies parasites, their hosts, and their relationships",
+                    "The study of plants and their reproductive structures",
+                    "The study of chemical reactions inside the human body",
+                    "The study of the skeletal system only"
+                ],
+                answer: 0,
+                explanation: "Parasitology studies parasites, their hosts, and the relationships between them."
+            },
+            {
+                id: 2,
+                question: "Which statement best describes a parasite?",
+                options: [
+                    "An organism that always benefits its host",
+                    "An organism that lives in or on another organism and benefits at the host's expense",
+                    "An organism that can only live in water",
+                    "An organism that never interacts with other organisms"
+                ],
+                answer: 1,
+                explanation: "A parasite obtains nutrients, shelter, or other benefits from a host, often at the host's expense."
+            },
+            {
+                id: 3,
+                question: "Which pair correctly describes two biological relationships?",
+                options: [
+                    "Mutualism: both benefit; Commensalism: one benefits while the other is neither significantly helped nor harmed",
+                    "Mutualism: one is harmed; Commensalism: both benefit",
+                    "Mutualism: neither benefits; Commensalism: both are harmed",
+                    "Mutualism and commensalism both always cause disease"
+                ],
+                answer: 0,
+                explanation: "Mutualism benefits both organisms. In commensalism, one benefits while the other is not significantly affected."
+            },
+            {
+                id: 4,
+                question: "What happens in parasitism?",
+                options: [
+                    "Both organisms benefit equally",
+                    "Neither organism is affected",
+                    "The parasite benefits at the expense of the host",
+                    "The host always kills the parasite immediately"
+                ],
+                answer: 2,
+                explanation: "Parasitism is a biological relationship in which the parasite benefits while the host may be harmed."
+            },
+            {
+                id: 5,
+                question: "What does pathogenicity refer to?",
+                options: [
+                    "The ability of a parasite to cause disease",
+                    "The number of hosts in a population",
+                    "The location of a laboratory",
+                    "The time required to collect a specimen"
+                ],
+                answer: 0,
+                explanation: "Pathogenicity is the ability of a parasite to cause disease."
+            },
+            {
+                id: 6,
+                question: "Which term describes the degree of pathogenicity or the severity of disease caused?",
+                options: [
+                    "Infestation",
+                    "Virulence",
+                    "Encystation",
+                    "Endemicity"
+                ],
+                answer: 1,
+                explanation: "Virulence refers to the degree of pathogenicity or severity of the disease caused."
+            },
+            {
+                id: 7,
+                question: "What is a reservoir in the context of parasitic infections?",
+                options: [
+                    "A medicine that treats all parasites",
+                    "A microscope used for laboratory diagnosis",
+                    "A source that maintains a parasite and may contribute to its transmission",
+                    "A parasite's inactive cyst stage"
+                ],
+                answer: 2,
+                explanation: "A reservoir may be a human, animal, or environmental source that maintains a parasite and contributes to transmission."
+            },
+            {
+                id: 8,
+                question: "Which three major groups are commonly used to classify medically important parasites?",
+                options: [
+                    "Bacteria, viruses, and fungi",
+                    "Protozoa, helminths, and ectoparasitic arthropods",
+                    "Mammals, birds, and reptiles",
+                    "Algae, plants, and bacteria"
+                ],
+                answer: 1,
+                explanation: "The presentation groups medically important parasites into protozoa, helminths, and ectoparasitic arthropods."
+            },
+            {
+                id: 9,
+                question: "How do amoebae traditionally move?",
+                options: [
+                    "By using pseudopodia",
+                    "By using cilia only",
+                    "By using wings",
+                    "By using roots"
+                ],
+                answer: 0,
+                explanation: "Amoebae move using pseudopodia. Flagellates use flagella, while ciliates use cilia."
+            },
+            {
+                id: 10,
+                question: "Which helminth group consists of flat, segmented worms with a scolex for attachment and no digestive tract?",
+                options: [
+                    "Nematodes",
+                    "Cestodes",
+                    "Trematodes",
+                    "Mites"
+                ],
+                answer: 1,
+                explanation: "Cestodes, or tapeworms, are flat and segmented, have a scolex for attachment, and lack a digestive tract."
+            },
+            {
+                id: 11,
+                question: "Which ectoparasites are typically microscopic, and some species can burrow into the skin?",
+                options: [
+                    "Cestodes",
+                    "Nematodes",
+                    "Mites",
+                    "Ciliates"
+                ],
+                answer: 2,
+                explanation: "Mites are very small arthropods. Some species, such as Sarcoptes scabiei, burrow into the skin."
+            },
+            {
+                id: 12,
+                question: "What is a facultative parasite?",
+                options: [
+                    "A parasite that must always live inside a host",
+                    "An organism normally capable of free-living existence that may become parasitic",
+                    "A parasite that can never cause an infection",
+                    "A host that carries a parasite without any further development"
+                ],
+                answer: 1,
+                explanation: "A facultative parasite is normally capable of free-living existence but may become parasitic."
+            },
+            {
+                id: 13,
+                question: "An opportunistic parasite is especially likely to cause severe disease when the host has:",
+                options: [
+                    "Improved eyesight",
+                    "A different hair color",
+                    "An impaired immune defense",
+                    "A normal body temperature"
+                ],
+                answer: 2,
+                explanation: "Opportunistic parasites can cause severe disease when host defenses are impaired."
+            },
+            {
+                id: 14,
+                question: "Which statement describes a direct or simple parasite life cycle?",
+                options: [
+                    "It always requires five different host species",
+                    "It requires only one host species to complete development",
+                    "It never includes any developmental stages",
+                    "It can only occur in insects"
+                ],
+                answer: 1,
+                explanation: "A direct or simple life cycle requires one host species. Ascaris lumbricoides is an example in the presentation."
+            },
+            {
+                id: 15,
+                question: "Which parasite is used in the presentation as an example of an indirect or complex life cycle involving more than one host?",
+                options: [
+                    "Taenia saginata",
+                    "Sarcoptes scabiei",
+                    "Candida albicans",
+                    "Chlamydia trachomatis"
+                ],
+                answer: 0,
+                explanation: "Taenia saginata is shown with humans as the definitive host and cattle as the intermediate host."
+            },
+            {
+                id: 16,
+                question: "In the malaria life cycle shown in the presentation, which organism is the definitive host?",
+                options: [
+                    "The human",
+                    "The female Anopheles mosquito",
+                    "The cattle",
+                    "The housefly"
+                ],
+                answer: 1,
+                explanation: "The female Anopheles mosquito is the definitive host because sexual reproduction of Plasmodium occurs there."
+            },
+            {
+                id: 17,
+                question: "What is autoinfection?",
+                options: [
+                    "Transmission from a new animal host only",
+                    "Infection that occurs only through a mosquito bite",
+                    "Reinfection of the same host without requiring exposure to a separate infected individual",
+                    "The transformation of a trophozoite into a cyst"
+                ],
+                answer: 2,
+                explanation: "Autoinfection involves reinfection of the same host without requiring exposure to a separate infected individual."
+            },
+            {
+                id: 18,
+                question: "What is the transformation of an active protozoan trophozoite into a cyst called?",
+                options: [
+                    "Excystation",
+                    "Encystation",
+                    "Inoculation",
+                    "Infestation"
+                ],
+                answer: 1,
+                explanation: "Encystation is the transformation of a protozoan trophozoite into a cyst."
+            },
+            {
+                id: 19,
+                question: "What is one important function of a cyst stage in many intestinal protozoa?",
+                options: [
+                    "It is always the most active feeding stage",
+                    "It guarantees that the parasite cannot spread",
+                    "It provides a protected stage important for survival and transmission",
+                    "It is the same as a definitive host"
+                ],
+                answer: 2,
+                explanation: "Cysts are usually protected, relatively dormant stages that help many intestinal protozoa survive and transmit. Not all protozoa produce cysts."
+            },
+            {
+                id: 20,
+                question: "Which route involves swallowing infective stages from contaminated hands, food, or water?",
+                options: [
+                    "Fecal-oral transmission",
+                    "Congenital transmission",
+                    "Bloodborne transmission",
+                    "Skin penetration"
+                ],
+                answer: 0,
+                explanation: "Fecal-oral transmission occurs when infective stages are ingested through contaminated hands, food, or water."
+            },
+            {
+                id: 21,
+                question: "What distinguishes a biological vector from a mechanical vector?",
+                options: [
+                    "A biological vector is always a human",
+                    "A biological vector allows the parasite to develop or multiply within it",
+                    "A biological vector never transmits parasites",
+                    "A biological vector is a diagnostic stage"
+                ],
+                answer: 1,
+                explanation: "In a biological vector, the parasite develops or multiplies. A mechanical vector carries the infectious agent without essential development or multiplication."
+            },
+            {
+                id: 22,
+                question: "Why does poor sanitation increase the risk of parasitic infection?",
+                options: [
+                    "It makes every parasite harmless",
+                    "It prevents eggs and cysts from reaching soil",
+                    "It allows fecal contamination of soil, food, and water",
+                    "It eliminates the need for safe drinking water"
+                ],
+                answer: 2,
+                explanation: "Poor sanitation can allow fecal contamination of soil, food, and water, increasing exposure to infectious stages."
+            },
+            {
+                id: 23,
+                question: "A parasitic disease that is persistently present in a particular population or geographic area is described as:",
+                options: [
+                    "Sporadic",
+                    "Endemic",
+                    "An accidental host",
+                    "An autoinfection"
+                ],
+                answer: 1,
+                explanation: "Endemic describes a disease that is consistently present in a particular population or geographic area."
+            },
+            {
+                id: 24,
+                question: "What is the main purpose of epidemiological surveillance?",
+                options: [
+                    "To replace all laboratory examinations",
+                    "To prescribe the same medicine to everyone",
+                    "To collect, analyze, and interpret health information to monitor disease and guide interventions",
+                    "To identify only the physical appearance of parasites"
+                ],
+                answer: 2,
+                explanation: "Surveillance helps monitor disease patterns and guide public health interventions. Activities may include specimen testing, mapping, and monitoring vectors or sanitation."
+            },
+            {
+                id: 25,
+                question: "How can a heavy parasite burden cause obstruction?",
+                options: [
+                    "Large numbers of parasites can block body passages",
+                    "Parasites always increase nutrient absorption",
+                    "Parasites automatically strengthen the immune system",
+                    "The parasite changes into a reservoir"
+                ],
+                answer: 0,
+                explanation: "Large numbers of parasites may block body passages, as illustrated by heavy Ascaris infection causing intestinal obstruction."
+            },
+            {
+                id: 26,
+                question: "Hookworm infection may contribute to anemia mainly because of which mechanism?",
+                options: [
+                    "Improved nutrient absorption",
+                    "Blood loss caused by the parasites",
+                    "Increased oxygen production",
+                    "Reduced exposure to allergens"
+                ],
+                answer: 1,
+                explanation: "Hookworms can damage the intestinal mucosa and cause blood loss, which may result in iron-deficiency anemia."
+            },
+            {
+                id: 27,
+                question: "What is eosinophilia?",
+                options: [
+                    "A decrease in all body cells",
+                    "An increase in the number of platelets only",
+                    "An increased number of eosinophils in peripheral blood",
+                    "The absence of an immune response"
+                ],
+                answer: 2,
+                explanation: "Eosinophilia refers to increased eosinophils in peripheral blood. It may occur in some helminth infections but is not specific to parasitic disease."
+            },
+            {
+                id: 28,
+                question: "Which clinical specimen is most commonly used for detecting intestinal parasites?",
+                options: [
+                    "Hair",
+                    "Stool",
+                    "Nail clippings",
+                    "Saliva only"
+                ],
+                answer: 1,
+                explanation: "Stool is the most commonly used specimen for detecting intestinal parasites."
+            },
+            {
+                id: 29,
+                question: "When is a perianal adhesive tape specimen generally collected according to the presentation?",
+                options: [
+                    "After a heavy meal in the evening",
+                    "Only after strenuous exercise",
+                    "Early in the morning before bathing or toileting",
+                    "Only after drinking a special solution"
+                ],
+                answer: 2,
+                explanation: "Perianal adhesive tape samples are collected from the perianal area, usually early in the morning before bathing or toileting."
+            },
+            {
+                id: 30,
+                question: "What can a microscopic examination help identify in a clinical specimen?",
+                options: [
+                    "Only the patient's age",
+                    "Only the patient's blood pressure",
+                    "Only the type of food recently eaten",
+                    "Parasite developmental stages, including eggs, larvae, cysts, trophozoites, and adult worms"
+                ],
+                answer: 3,
+                explanation: "Microscopy may reveal parasite eggs, larvae, cysts, trophozoites, and adult worms, depending on the specimen and parasite."
+            },
+            {
+                id: 31,
+                question: "What do molecular diagnostic methods such as PCR and NAAT detect?",
+                options: [
+                    "Parasite genetic material, such as DNA or RNA",
+                    "Only a parasite's color",
+                    "Only the size of an adult worm",
+                    "Only the host's body temperature"
+                ],
+                answer: 0,
+                explanation: "PCR and other nucleic acid amplification methods detect parasite genetic material and may improve diagnostic sensitivity and specificity."
+            },
+            {
+                id: 32,
+                question: "Which statement correctly describes a medication discussed in the presentation?",
+                options: [
+                    "Metronidazole is an antiprotozoal and anti-anaerobic agent commonly used for protozoan infections",
+                    "Praziquantel is presented as a topical treatment for lice only",
+                    "Artemisinin-based combination therapies are topical treatments for scabies",
+                    "Permethrin is used to treat every bacterial infection"
+                ],
+                answer: 0,
+                explanation: "The presentation describes metronidazole as an antiprotozoal and anti-anaerobic agent. It also discusses other treatments, including albendazole, mebendazole, praziquantel, ivermectin, antimalarials, and topical ectoparasiticides."
+            },
+            {
+                id: 33,
+                question: "According to the presentation, what should guide the selection of treatment for a parasitic infection?",
+                options: [
+                    "The patient's favorite color",
+                    "The causative organism, infection location, severity, patient-specific factors, and current clinical guidelines",
+                    "The same medication for every parasite and every patient",
+                    "Only the appearance of the medicine package"
+                ],
+                answer: 1,
+                explanation: "The presentation emphasizes current clinical guidelines and patient-specific factors such as age, pregnancy, comorbidities, geographic resistance patterns, and drug interactions."
+            },
+            {
+                id: 34,
+                question: "Which statement best reflects the presentation's discussion of bacteria and fungi in medical parasitology?",
+                options: [
+                    "All bacteria and fungi are parasites",
+                    "Bacteria and fungi never interact with hosts",
+                    "Some bacteria and fungi can be parasitic, but medical parasitology conventionally focuses on protozoa, helminths, and ectoparasitic arthropods",
+                    "Fungi are the only organisms studied in parasitology"
+                ],
+                answer: 2,
+                explanation: "The slides explain that some bacteria and fungi can have parasitic relationships, but medical parasitology conventionally focuses on protozoa, helminths, and ectoparasitic arthropods."
+            },
+            {
+                id: 35,
+                question: "Which combination best supports the prevention and control of parasitic infections?",
+                options: [
+                    "Ignoring symptoms and avoiding diagnosis",
+                    "Drinking untreated water and walking barefoot in contaminated soil",
+                    "Keeping standing water around homes",
+                    "Personal hygiene, sanitation, safe drinking water and food, vector control, protective practices, early diagnosis, and community education"
+                ],
+                answer: 3,
+                explanation: "The presentation emphasizes several complementary measures, including hygiene, sanitation, water and food safety, vector control, footwear, early diagnosis and treatment, and community education."
+            }
+        ];
+
+        const matchingQuestions = [
+            {
+                id: 36,
+                question: "An organism that lives in or on another organism and benefits at the other organism's expense.",
+                answer: "Parasite",
+                explanation: "A parasite obtains benefits from the host, often at the host's expense."
+            },
+            {
+                id: 37,
+                question: "An organism that harbors a parasite and provides an environment in which it may survive, develop, or reproduce.",
+                answer: "Host",
+                explanation: "A host provides the environment in which a parasite can survive, develop, or reproduce."
+            },
+            {
+                id: 38,
+                question: "A biological relationship in which one organism benefits at the expense of another.",
+                answer: "Parasitism",
+                explanation: "Parasitism describes the relationship between a parasite and its host in which the parasite benefits at the host's expense."
+            },
+            {
+                id: 39,
+                question: "The ability of a parasite to cause disease.",
+                answer: "Pathogenicity",
+                explanation: "Pathogenicity describes the ability to cause disease."
+            },
+            {
+                id: 40,
+                question: "The degree of pathogenicity or severity of the disease caused.",
+                answer: "Virulence",
+                explanation: "Virulence refers to the degree of pathogenicity or disease severity."
+            },
+            {
+                id: 41,
+                question: "A human, animal, or environmental source that maintains a parasite and may contribute to its transmission.",
+                answer: "Reservoir",
+                explanation: "A reservoir provides a source in which a parasite can be maintained and from which transmission may occur."
+            },
+            {
+                id: 42,
+                question: "A living carrier that transmits an infectious agent between hosts.",
+                answer: "Vector",
+                explanation: "A vector transmits an infectious agent. In a biological vector, the parasite may develop or multiply."
+            },
+            {
+                id: 43,
+                question: "An infection naturally transmitted between vertebrate animals and humans.",
+                answer: "Zoonosis",
+                explanation: "A zoonosis is an infection naturally transmitted between vertebrate animals and humans."
+            },
+            {
+                id: 44,
+                question: "A host in which a parasite undergoes sexual reproduction or reaches sexual maturity.",
+                answer: "Definitive host",
+                explanation: "Sexual reproduction or sexual maturity identifies the definitive host."
+            },
+            {
+                id: 45,
+                question: "A host in which larval development or asexual multiplication occurs.",
+                answer: "Intermediate host",
+                explanation: "An intermediate host supports larval development or asexual multiplication of the parasite."
+            },
+            {
+                id: 46,
+                question: "A host that is not normally involved in the parasite's life cycle.",
+                answer: "Accidental host",
+                explanation: "An accidental host is not the usual host involved in the parasite's life cycle."
+            },
+            {
+                id: 47,
+                question: "A host in which the parasite survives without further essential development.",
+                answer: "Paratenic or transport host",
+                explanation: "A paratenic or transport host carries the parasite without further essential development."
+            },
+            {
+                id: 48,
+                question: "The developmental stage capable of establishing infection in a susceptible host.",
+                answer: "Infective stage",
+                explanation: "The infective stage is the stage capable of establishing an infection in a susceptible host."
+            },
+            {
+                id: 49,
+                question: "The parasite stage that can be detected in a clinical specimen for diagnosis.",
+                answer: "Diagnostic stage",
+                explanation: "The diagnostic stage is the stage that can be detected in a clinical specimen."
+            },
+            {
+                id: 50,
+                question: "The process in which a cyst releases an active trophozoite form.",
+                answer: "Excystation",
+                explanation: "Excystation is the release of the active form from a cyst. Encystation is the reverse transformation, from a trophozoite into a cyst."
+            }
+        ];
+
+        const matchingTerms = matchingQuestions
+            .map(item => item.answer)
+            .sort((a, b) => a.localeCompare(b));
+
+        const mcqContainer = document.getElementById("mcqContainer");
+        const matchingContainer = document.getElementById("matchingContainer");
+        const quizForm = document.getElementById("quizForm");
+        const progressText = document.getElementById("progressText");
+        const progressFill = document.getElementById("progressFill");
+        const progressTrack = document.getElementById("progressTrack");
+        const resultBox = document.getElementById("resultBox");
+        const scoreDisplay = document.getElementById("scoreDisplay");
+        const resultMessage = document.getElementById("resultMessage");
+        const resultDetail = document.getElementById("resultDetail");
+        const resetButton = document.getElementById("resetButton");
+
+        let hasSubmitted = false;
+
+        function escapeHTML(value) {
+            return String(value).replace(/[&<>"']/g, character => {
+                const entities = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                };
+                return entities[character];
+            });
+        }
+
+        function renderMCQ() {
+            mcqContainer.innerHTML = mcqQuestions.map(item => `
+                <article class="question-card" id="card-${item.id}" data-qid="${item.id}">
+                    <div class="question-top">
+                        <div class="question-number">${item.id}</div>
+
+                        <div class="question-content">
+                            <p class="question-title">${escapeHTML(item.question)}</p>
+
+                            <div class="choice-list">
+                                ${item.options.map((option, index) => `
+                                    <label class="choice">
+                                        <input
+                                            type="radio"
+                                            name="q${item.id}"
+                                            value="${index}"
+                                            aria-label="${escapeHTML(option)}"
+                                        >
+                                        <span>${escapeHTML(option)}</span>
+                                    </label>
+                                `).join("")}
+                            </div>
+
+                            <div class="answer-note" id="feedback-${item.id}"></div>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        function renderMatching() {
+            matchingContainer.innerHTML = matchingQuestions.map(item => `
+                <article class="question-card" id="card-${item.id}" data-qid="${item.id}">
+                    <div class="question-top">
+                        <div class="question-number">${item.id}</div>
+
+                        <div class="question-content">
+                            <p class="question-title">${escapeHTML(item.question)}</p>
+
+                            <select
+                                class="match-select"
+                                id="match-${item.id}"
+                                aria-label="Answer for question ${item.id}"
+                            >
+                                <option value="">Choose the correct term...</option>
+
+                                ${matchingTerms.map(term => `
+                                    <option value="${escapeHTML(term)}">
+                                        ${escapeHTML(term)}
+                                    </option>
+                                `).join("")}
+                            </select>
+
+                            <div class="answer-note" id="feedback-${item.id}"></div>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        function updateProgress() {
+            let answered = 0;
+
+            mcqQuestions.forEach(item => {
+                const selected = document.querySelector(
+                    `input[name="q${item.id}"]:checked`
+                );
+
+                if (selected) {
+                    answered++;
+                }
+            });
+
+            matchingQuestions.forEach(item => {
+                const selected = document.getElementById(`match-${item.id}`);
+
+                if (selected && selected.value !== "") {
+                    answered++;
+                }
+            });
+
+            const percentage = (answered / 50) * 100;
+
+            progressText.textContent = `Answered ${answered} of 50`;
+            progressFill.style.width = `${percentage}%`;
+            progressTrack.setAttribute("aria-valuenow", answered);
+        }
+
+        function clearFeedback() {
+            hasSubmitted = false;
+
+            document.querySelectorAll(".question-card").forEach(card => {
+                card.classList.remove("correct", "incorrect");
+            });
+
+            document.querySelectorAll(".answer-note").forEach(note => {
+                note.classList.remove("visible");
+                note.innerHTML = "";
+            });
+
+            resultBox.classList.remove("visible");
+        }
+
+        function showFeedback(id, isCorrect, html) {
+            const card = document.getElementById(`card-${id}`);
+            const feedback = document.getElementById(`feedback-${id}`);
+
+            card.classList.remove("correct", "incorrect");
+            card.classList.add(isCorrect ? "correct" : "incorrect");
+
+            feedback.innerHTML = html;
+            feedback.classList.add("visible");
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+            let correctMultipleChoice = 0;
+            let correctMatching = 0;
+            let unanswered = 0;
+
+            mcqQuestions.forEach(item => {
+                const selected = document.querySelector(
+                    `input[name="q${item.id}"]:checked`
+                );
+
+                const isCorrect = Boolean(
+                    selected && Number(selected.value) === item.answer
+                );
+
+                if (isCorrect) {
+                    score++;
+                    correctMultipleChoice++;
+                }
+
+                if (!selected) {
+                    unanswered++;
+                }
+
+                const correctAnswer = item.options[item.answer];
+
+                let feedbackHTML;
+
+                if (isCorrect) {
+                    feedbackHTML = `
+                        <strong>♡ Correct!</strong>
+                        ${escapeHTML(item.explanation)}
+                    `;
+                } else {
+                    const message = selected
+                        ? "Not quite."
+                        : "You left this question blank.";
+
+                    feedbackHTML = `
+                        <strong>${message}</strong>
+                        Correct answer:
+                        <strong>${escapeHTML(correctAnswer)}</strong>.
+                        ${escapeHTML(item.explanation)}
+                    `;
+                }
+
+                showFeedback(item.id, isCorrect, feedbackHTML);
+            });
+
+            matchingQuestions.forEach(item => {
+                const selected = document.getElementById(`match-${item.id}`);
+                const isCorrect = Boolean(
+                    selected && selected.value === item.answer
+                );
+
+                if (isCorrect) {
+                    score++;
+                    correctMatching++;
+                }
+
+                if (!selected || selected.value === "") {
+                    unanswered++;
+                }
+
+                let feedbackHTML;
+
+                if (isCorrect) {
+                    feedbackHTML = `
+                        <strong>♡ Correct match!</strong>
+                        ${escapeHTML(item.explanation)}
+                    `;
+                } else {
+                    const message = selected && selected.value
+                        ? "Not quite."
+                        : "You left this question blank.";
+
+                    feedbackHTML = `
+                        <strong>${message}</strong>
+                        Correct term:
+                        <strong>${escapeHTML(item.answer)}</strong>.
+                        ${escapeHTML(item.explanation)}
+                    `;
+                }
+
+                showFeedback(item.id, isCorrect, feedbackHTML);
+            });
+
+            const percentage = Math.round((score / 50) * 100);
+
+            let message;
+
+            if (score >= 45) {
+                message = "Numba Wan energy! ♡ Outstanding work! You have a strong grasp of the topics. Keep being amazing.";
+            } else if (score >= 38) {
+                message = "You're doing so well! ♡ You understand a lot of the material. Review the questions you missed and keep going.";
+            } else if (score >= 30) {
+                message = "Good job, pretty girl! ♡ You're building your understanding. A little more review can help you improve even further.";
+            } else if (score >= 20) {
+                message = "Keep going! ♡ Learning takes practice. Read the explanations, revisit the slides, and try again.";
+            } else {
+                message = "Every expert starts somewhere. ♡ Take your time reviewing the lessons, learn from the explanations, and give it another try.";
+            }
+
+            scoreDisplay.textContent = `${score} / 50`;
+            resultMessage.textContent = message;
+
+            resultDetail.textContent =
+                `${percentage}% • Multiple choice: ${correctMultipleChoice}/35 • Matching: ${correctMatching}/15 • Unanswered: ${unanswered}`;
+
+            resultBox.classList.add("visible");
+            hasSubmitted = true;
+
+            updateProgress();
+
+            resultBox.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+
+        quizForm.addEventListener("change", () => {
+            if (hasSubmitted) {
+                clearFeedback();
+            }
+
+            updateProgress();
+        });
+
+        quizForm.addEventListener("submit", event => {
+            event.preventDefault();
+            gradeQuiz();
+        });
+
+        resetButton.addEventListener("click", () => {
+            quizForm.reset();
+            clearFeedback();
+            updateProgress();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+
+        renderMCQ();
+        renderMatching();
+        updateProgress();
+    </script>
+</body>
+</html>
